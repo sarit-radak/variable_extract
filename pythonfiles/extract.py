@@ -80,7 +80,7 @@ def write_to_excel(file_name, row_data):
         workbook = Workbook()
         sheet = workbook.active
         # Add variables (if desired)
-        sheet.append(["Fragment Length", "Good Hits", "Wrong Num Hits", "Coords Bad", "Good Hits %", "Wrong Num Hits %", "Coords Bad %"])
+        sheet.append(["Library", "Good Hits", "Wrong Num Hits", "Coords Bad", "Good Hits %", "Wrong Num Hits %", "Coords Bad %"])
 
     # Append the new row
     sheet.append(row_data)
