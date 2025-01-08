@@ -17,7 +17,7 @@ def makedb ():
     subprocess.run(command, check=True, stderr=subprocess.DEVNULL)
 
 def blast (library, num_regions):
-    print (f"blasting {library} against amplicons")
+    print (f"blasting amplicons against {library} ")
 
     blast_command = [
     "blastn",
@@ -103,7 +103,8 @@ summary_file = "extraction_summary.xlsx" # summary of extraction success
 
 makedb ()
 blast (library, num_regions)
-
+print ("blast complete")
+print (f"extracting variable regions from {library} ")
 
 
 # read blast alignment summaries into dictionary
@@ -174,6 +175,8 @@ for record in SeqIO.parse(fasta_file, "fasta"):
 
     else:
         wrong_num_hits +=1
+
+print ("variable region extraction complete")
 
 df = pd.DataFrame(rows)
 df.to_csv (f"files/{library}.csv", index=False)
