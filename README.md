@@ -19,7 +19,7 @@ All of the code is run through `extract.sh`.
 
 ### To Do
 
-1. Unpack this zip file, copy the folder onto Garibaldi
+1. Make a copy of this repo in garibaldi
 2. Give the job a descriptive name in `extract.sh`
 3. Adjust the number of arrays requested in `extract.sh` (typically 1-n, where n is the number of libraries being analyzed)
 4. Add the names of the libraries to the variable “libraries” in `extract.sh`
