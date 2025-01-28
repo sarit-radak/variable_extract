@@ -54,7 +54,9 @@ def get_variable (first_hit, second_hit, seq, orientation):
             else:
                 status = "coords_bad"   
     
-        correct_length_part = second_hit[1].split('-')[1].split('_')[0]  # Extracts length
+        if "-" in second_hit[1]:
+            correct_length_part = second_hit[1].split('-')[1].split('_')[0]  # Extracts length
+        else correct_length_part = -1
 
         # Check if it's a list of acceptable lengths
         if ',' in correct_length_part:
