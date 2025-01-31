@@ -1,7 +1,5 @@
-# This script extracts the variable regions from the reads. It is designed to be run on Garibaldi
-
 #!/bin/bash
-
+# This script extracts the variable regions from the reads. It is designed to be run on Garibaldi
 
 #SBATCH --job-name=Extract_Test
 #SBATCH --output=logs/misc/%x%A_%a.out # redirects out files
