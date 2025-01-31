@@ -1,6 +1,5 @@
-# This script extracts the variable regions from the reads. It is designed to be run on a local machine. I use it when Garibaldi is slow and my libraries are small
-
 #!/bin/bash
+# This script extracts the variable regions from the reads. It is designed to be run on a local machine. I use it when Garibaldi is slow and my libraries are small
 
 # Define the input and output directories
 input_dir="/Users/sradak/Downloads/25-01-20_A3B2M_S6/files" # input fasta files
