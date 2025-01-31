@@ -1,6 +1,5 @@
-# This script adds a folder in each fastq folder with its name. I do this just in case I mess up the barcode deconvolution or want to check my work.
-
 #!/bin/bash
+# This script adds a folder in each fastq folder with its name. I do this just in case I mess up the barcode deconvolution or want to check my work.
 
 #SBATCH --job-name=Rename
 #SBATCH --output=logs/misc/%x%A_%a.out # redirects out files
