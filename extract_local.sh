@@ -8,6 +8,20 @@ pydir="/Users/sradak/Downloads/25-01-20_A3B2M_S6/pythonfiles/"
 libraries=("test1" "test2" "test3")
 num_regions=6
 
+process_make_db() {
+    # Export anything written to the terminal into a log file
+    log_file="logs/make_db.log"
+    exec > "$log_file" 2>&1
+
+    # Run the script
+    python3 -u "${pydir}make_db.py"
+}
+
+export -f process_make_db
+export pydir
+
+# Run in parallel (only once, but keeping it consistent with your approach)
+parallel process_make_db ::: 1
 
 process_library() {
     local library="$1"
