@@ -2,7 +2,7 @@
 # This script extracts the variable regions from the reads. It is designed to be run on a local machine. I use it when Garibaldi is slow and my libraries are small
 
 # Define the input and output directories
-input_dir="/Users/sradak/Downloads/25-01-20_A3B2M_S6/files" # input fasta files
+input_dir="/Users/sradak/Downloads/25-01-20_A3B2M_S6/files/" # input fasta files
 pydir="/Users/sradak/Downloads/25-01-20_A3B2M_S6/pythonfiles/"
 
 libraries=("test1" "test2" "test3")
@@ -18,7 +18,7 @@ process_library() {
 
     # extract all sequences from fastq directory
     #gunzip $input_dir/*.gz
-    python3 $pydir/extract_to_fasta.py $input_dir $library
+    python3 $pydir/extract_to_fasta.py $library $input_dir
 
 
     # extract the variable regions from each sequence
