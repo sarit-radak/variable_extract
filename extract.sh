@@ -42,22 +42,22 @@ python3 -u $pydir"len_dist.py" "$library"
 min_len=3000
 
 # exclude all reads that aren't long enough
-python3 -u $pydir"sort_by_len.py" "$library" "$min_len"
+#python3 -u $pydir"sort_by_len.py" "$library" "$min_len"
 
 # make the blast database
-python3 -u $pydir"make_db.py" "${dir}/blastdb/flanking_regions.xlsx"
+#python3 -u $pydir"make_db.py" "${dir}/blastdb/flanking_regions.xlsx"
 
 # blast the reads against the flanking regions
-python3 -u $pydir"blast.py" "$library" "$num_regions"
+#python3 -u $pydir"blast.py" "$library" "$num_regions"
 
 # extract the variable regions from each sequence
-python3 -u $pydir"extract.py" "$library" "$num_regions"
+#python3 -u $pydir"extract.py" "$library" "$num_regions"
 
 # rank the unique sequences
-python3 -u $pydir"rank_var.py" "$library"
+#python3 -u $pydir"rank_var.py" "$library"
 
 # calculate the amino acid frequencies at each position
-python3 -u $pydir"calc_freq.py" "$library"
+#python3 -u $pydir"calc_freq.py" "$library"
 
 # calculate the fold change between two libraries
 #python3 -u $pydir"calc_fc.py" "test" "test2"
