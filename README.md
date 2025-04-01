@@ -1,6 +1,6 @@
 # Extracting Variable Regions from Nanopore Reads
 
-This code is designed to extract variable regions from Oxford Nanopore reads. Given the nucleotide sequences that flank each region, it uses a blast search to identify the location of each variable region in each read. It then extracts the regions, translates them, and writes them to an output file.
+This code is designed to extract diverse amino acid stretches (variable regions) from Oxford Nanopore reads. Given the nucleotide sequences that flank each region (flanking regions), it uses a blast search to identify the location of each variable region in each read. It then extracts the regions, translates them, and writes them to an output file.
 
 For QC purposes, the code also keeps track of the number of reads that it successfully processes.
 
