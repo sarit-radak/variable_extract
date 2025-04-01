@@ -4,6 +4,8 @@ This code is designed to extract variable regions from Oxford Nanopore reads. Gi
 
 For QC purposes, the code also keeps track of the number of reads that it successfully processes.
 
+I've included additional scripts that calculate the frequency of each unique sequence (rank_variable.py), the amino acid frequencies at each position (calc_freq.py), and the fold-change in frequencies between two libraries (calc_fc.py)
+
 ### Environment
 
 Everything happens in a single project directory. The following subdirectories are used to keep all of the files organized.
@@ -23,13 +25,12 @@ All of the code is run through `extract.sh`.
 2. Give the job a descriptive name in `extract.sh`
 3. Adjust the number of arrays requested in `extract.sh` (typically 1-n, where n is the number of libraries being analyzed)
 4. Add the names of the libraries to the variable “libraries” in `extract.sh`
-5. Move the library fastq files to the `files/` directory.
-6. Specify the input and pythonfile directories in `extract.sh`
-7. Collect the flanking regions into a single file (`blastdb/flanking_regions.fasta`)
-    1. Name the regions `>(name)_5prime-(length)` or `>(name)_3prime`. Everything before the first underscore is used as the name of the variable region in the final output file. The length is pulled as the value after the first dash in the name of the 5 prime flanking region. For instances where there are multiple possible lengths, separate them with commas. If the DNA is encoded on the antisense strand of DNA, add "-R" after the length
+5. Move the library fastq files to folders inside the `files/` directory.
+6. Collect the flanking regions into a single file (`blastdb/flanking_regions.xlsx`)
+    1. For instances where there are multiple possible lengths, separate them with commas. If the DNA is encoded on the antisense strand of DNA, denote "Bottom" in the "Strand" column.
     2. Regions can be any length. Shorter lengths will run faster. Lengths longer than 8nt don’t increase the number of reads that are successfully processed ([24-12-02 BLAST Strategy Speedtest](https://www.notion.so/24-12-02-BLAST-Strategy-Speedtest-151e5b183a4c809f8383e27a30bd3221?pvs=21))
 8. Specify the number of regions to extract in `extract.sh`
 9. Run
 
 
-I've left a test dataset ("test_assembled.fasta") in this repo for troubleshooting.
+I've left a test dataset ("test_assembled.fasta") in this repo for troubleshooting. With a length cutoff of 3000 bp, it should have 1,934 sequences successfully extracted, 1661 with a variable region of the wrong length, 4 that are missing flanking regions, and 1633 that are too short.
