@@ -2,6 +2,8 @@
 # This script extracts the variable regions from the reads. It is designed to be run on Garibaldi
 
 #SBATCH --job-name=Extract_Test
+#SBATCH --output=logs/misc/%x%A_%a.out # redirects out files
+#SBATCH --error=logs/misc/%x%A_%a.err # redirects error files
 #SBATCH --array=1-1 # one array for each library
 #SBATCH --time=7-00:00:00
 #SBATCH --cpus-per-task=16
