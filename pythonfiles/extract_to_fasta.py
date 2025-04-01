@@ -7,10 +7,10 @@ from Bio import SeqIO
 # Get command line arguments
 
 sample = sys.argv[1]
-dir = sys.argv[2]
+dir = "files/"
 
 # Output FASTA file
-output_fasta = f"{dir}{sample}_assembled.fasta"
+output_fasta = f"{dir}{sample}_all.fasta"
 input_dir = f"{dir}{sample}"
 
 
