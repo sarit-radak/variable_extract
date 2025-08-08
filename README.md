@@ -33,4 +33,4 @@ All of the code is run through `extract.sh`.
 9. Run
 
 
-I've left a test dataset ("test_assembled.fasta") in this repo for troubleshooting. With a length cutoff of 3000 bp, it should have 1,934 sequences successfully extracted, 1661 with a variable region of the wrong length, 4 that are missing flanking regions, and 1633 that are too short.
+I've left a test dataset ("test_assembled.fasta") in this repo for troubleshooting. With a length cutoff of 3,000 bp, it should have 1,934 sequences successfully extracted, 1,661 with a variable region of the wrong length, 4 that are missing flanking regions, and 1,633 that are too short.
