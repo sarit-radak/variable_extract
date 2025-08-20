@@ -1,47 +1,69 @@
 #!/bin/bash
-# This script extracts the variable regions from the reads. It is designed to be run on Garibaldi
 
+# ===== SLURM directives (ignored locally) =====
 #SBATCH --job-name=Extract_Test
-#SBATCH --output=logs/misc/%x%A_%a.out # redirects out files
-#SBATCH --error=logs/misc/%x%A_%a.err # redirects error files
-#SBATCH --array=1-1 # one array for each library
+#SBATCH --output=logs/misc/%x%A_%a.out
+#SBATCH --error=logs/misc/%x%A_%a.err
+#SBATCH --array=1-1
 #SBATCH --time=7-00:00:00
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=16GB
 
-# get directory names
-if [[ -n "$SLURM_SUBMIT_DIR" ]]; then
-    # Running under SLURM
-    cd "$SLURM_SUBMIT_DIR" || exit 1
-    dir="$SLURM_SUBMIT_DIR"
-    
-    input_dir="$dir/files/"
-    pydir="$dir/pythonfiles/"
+# ===== Define libraries =====
+libraries=("test")
 
+# if SLURM_ARRAY_TASK_ID is missing, default to first element
+if [[ -n "$SLURM_ARRAY_TASK_ID" ]]; then
+    library=${libraries[$((SLURM_ARRAY_TASK_ID-1))]}
 else
-    # Running interactively with bash
-    dir="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
-    input_dir="$dir/files/"
-    pydir="$dir/pythonfiles/"
+    library=${libraries[0]}
 fi
 
-
-libraries=("test")
-library=${libraries[$((SLURM_ARRAY_TASK_ID-1))]}
 num_regions=3
 
-# export anything written to the terminal into a log file
-log_file="logs/${library}_extract.log"
-exec > "$log_file" 2>&1
+echo "Running on library: $library"
 
+
+# ===== Parallel execution =====
+# Example: run a python script in parallel across regions
+# locally use GNU parallel or xargs
+regions=$(seq 1 $num_regions)
+
+if [[ -n "$SLURM_CPUS_PER_TASK" ]]; then
+    cpus=$SLURM_CPUS_PER_TASK
+else
+    cpus=$(sysctl -n hw.ncpu)   # detect CPU cores on Mac
+fi
+
+export library input_dir pydir
+echo "$regions" | xargs -n 1 -P "$cpus" -I {} \
+    echo ligma
+    #python3 "$pydir/extract_regions.py" --library "$library" --region {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# export anything written to the terminal into a log file
+#log_file="logs/${library}_extract.log"
+#exec > "$log_file" 2>&1
 
 # extract sequences to fasta
-python3 -u $pydir"extract_to_fasta.py" "$library"
+#python3 -u $pydir"extract_to_fasta.py" "$library"
 
 # calculate length distribution
-python3 -u $pydir"len_dist.py" "$library"
+#python3 -u $pydir"len_dist.py" "$library"
 
-min_len=3000
+#min_len=3000
 
 # exclude all reads that aren't long enough
 #python3 -u $pydir"sort_by_len.py" "$library" "$min_len"
