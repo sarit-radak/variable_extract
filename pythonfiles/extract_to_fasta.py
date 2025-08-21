@@ -7,11 +7,11 @@ from Bio import SeqIO
 # Get command line arguments
 
 sample = sys.argv[1]
-dir = "files/"
+dir = f"files/{sample}"
 
 # Output FASTA file
-output_fasta = f"{dir}{sample}_all.fasta"
-input_dir = f"{dir}{sample}"
+output_fasta = f"{dir}/{sample}_all.fasta"
+input_dir = f"{dir}"
 
 
 # Collect all .fastq and .fastq.gz files from the directory

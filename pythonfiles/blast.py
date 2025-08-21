@@ -5,9 +5,9 @@ def blast (library, num_regions):
 
     blast_command = [
     "blastn",
-    "-query", "files/" + library + "_len_pass.fasta",
+    "-query", "files/" + library + "/" + library + "_len_pass.fasta",
     "-db", "blastdb/flanking_regions",
-    "-out", "files/" + library + "_vs_flanking_regions.txt",
+    "-out", "files/" + library + "/" + library + "_vs_flanking_regions.txt",
     "-outfmt", "6",
     "-max_target_seqs", str(num_regions*2),
     "-max_hsps", "1",
@@ -20,9 +20,6 @@ def blast (library, num_regions):
 
 library = sys.argv[1]
 num_regions = int(sys.argv[2])
-
-
-fasta_file = f"files/{library}_len_pass.fasta" # fasta file of reads
 
 print (f"blasting {library} against flanking regions")
 blast (library, num_regions)

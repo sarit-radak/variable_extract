@@ -5,9 +5,9 @@ import shutil
 library = sys.argv[1]
 min_len = int(sys.argv[2])
 
-input_fasta = f"files/{library}_all.fasta"
-good_file = f"files/{library}_len_pass.fasta"
-bad_file = f"files/{library}_len_fail.fasta"
+input_fasta = f"files/{library}/{library}_all.fasta"
+good_file = f"files/{library}/{library}_len_pass.fasta"
+bad_file = f"files/{library}/{library}_len_fail.fasta"
 
 # If threshold is 0, rename the input file to the good file and create an empty bad file
 if min_len == 0:

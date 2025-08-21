@@ -78,8 +78,8 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
 
 library = sys.argv[1]
 
-input_file = f"files/{library}.csv"
-output_file = f"files/{library}_freq.xlsx"
+input_file = f"files/{library}/{library}.csv"
+output_file = f"files/{library}/{library}_freq.xlsx"
 options = f"blastdb/options.xlsx"
 
 calculate_amino_acid_frequencies (input_file, output_file, options)

@@ -24,7 +24,7 @@ for library in "${libraries[@]}"; do
         #python3 -u pythonfiles/extract_to_fasta.py "$library"
 
         # extract first 1000 reads
-        #awk '/^>/ {count++} count<=1000' files/$library"_all.fasta" >  files/$library"_1000.fasta"
+        #awk '/^>/ {count++} count<=1000' files/$library/$library"_all.fasta" >  files/$library/$library"_1000.fasta"
         
         # exclude all reads that aren't long enough
         #python3 -u pythonfiles/sort_by_len.py "$library" 3000
@@ -41,21 +41,11 @@ for library in "${libraries[@]}"; do
         # rank the unique sequences
         #python3 -u pythonfiles/rank_var.py "$library"
 
-
+        # calculate the amino acid frequencies at each position
+        #python3 -u pythonfiles/calc_freq.py "$library"
     } >"$log_file" 2>&1 &
 
 done
 
 # wait for all backgrounded jobs to finish
 wait
-
-echo yippee
-
-
-
-
-# calculate the amino acid frequencies at each position
-#python3 -u pythonfiles/calc_freq.py "$library"
-
-# calculate the fold change between two libraries
-#python3 -u pythonfiles/calc_fc.py "test" "test2"

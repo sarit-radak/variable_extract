@@ -31,7 +31,7 @@ def calculate_variable_frequency(input_file, output_file):
 
 library = sys.argv[1]
 
-input_file = f"files/{library}.csv"
-output_file = f"files/{library}_ranked.csv"
+input_file = f"files/{library}/{library}.csv"
+output_file = f"files/{library}/{library}_ranked.csv"
 
 calculate_variable_frequency(input_file, output_file)
