@@ -6,13 +6,11 @@ source extract/bin/activate
 #python3 -m pip install bio matplotlib openpyxl
 
 mkdir -p logs
+
 libraries=($(find files -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
 
-
-
-num_regions=3
-
-
+# make the blast database
+#python3 -u pythonfiles/make_db.py 
 
 
 for library in "${libraries[@]}"; do
@@ -29,14 +27,11 @@ for library in "${libraries[@]}"; do
         # exclude all reads that aren't long enough
         #python3 -u pythonfiles/sort_by_len.py "$library" 3000
 
-        # make the blast database
-        #python3 -u pythonfiles/make_db.py "blastdb/flanking_regions.xlsx"
-
         # blast the reads against the flanking regions
-        #python3 -u pythonfiles/blast.py "$library" "$num_regions"
+        python3 -u pythonfiles/blast.py "$library"
 
         # extract the variable regions from each sequence
-        #python3 -u pythonfiles/extract.py "$library" "$num_regions"
+        python3 -u pythonfiles/extract.py "$library"
 
         # rank the unique sequences
         #python3 -u pythonfiles/rank_var.py "$library"

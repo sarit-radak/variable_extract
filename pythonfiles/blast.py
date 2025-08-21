@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import pandas as pd
 
 def blast (library, num_regions):
 
@@ -19,7 +20,11 @@ def blast (library, num_regions):
 
 
 library = sys.argv[1]
-num_regions = int(sys.argv[2])
+
+
+df = pd.read_excel("blastdb/flanking_regions.xlsx")
+num_regions = len(df)
+
 
 print (f"blasting {library} against flanking regions")
 blast (library, num_regions)

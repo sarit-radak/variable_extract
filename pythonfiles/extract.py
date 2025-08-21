@@ -1,5 +1,6 @@
 import os
 import sys
+from numpy import var
 import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -8,6 +9,7 @@ from openpyxl import load_workbook, Workbook
 
 
 def get_variable (first_hit, second_hit, seq, orientation, antisense):
+        print (first_hit, second_hit)
         variable = ""
         status = ""
 
@@ -35,11 +37,12 @@ def get_variable (first_hit, second_hit, seq, orientation, antisense):
             else:
                 status = "variable_wrong_len"   
     
-        if "-" in second_hit[1]:
-            correct_length_part = second_hit[1].split('-')[1].split('_')[0]  # Extracts length
+        if len(second_hit[1].split("-")) == 3: # name, 5 prime, length
+            correct_length_part = second_hit[1].split('-')[2]  # Extracts length
         
         else:
             correct_length_part = -1
+
 
         # Check if it's a list of acceptable lengths
         if ',' in correct_length_part:
@@ -84,10 +87,28 @@ def write_to_excel(file_name, row_data):
     # Save the workbook
     workbook.save(file_name)
 
+def sort_key(x):
+    name = x[1]  
+    parts = name.split("_")
+
+    # Pull out digits (your current approach)
+    digits = int(''.join(filter(str.isdigit, parts[1])))
+
+    # Find "3prime" or "5prime"
+    if "3prime" in name:
+        prime_val = 0
+    elif "5prime" in name:
+        prime_val = 1
+    else:
+        prime_val = 2  # fallback if neither found
+
+    return (digits, prime_val, name)
+
 
 
 library = sys.argv[1]
-num_regions = int(sys.argv[2])
+df = pd.read_excel("blastdb/flanking_regions.xlsx")
+num_regions = len(df)
 
 fasta_file = f"files/{library}/{library}_len_pass.fasta" # fasta file of reads
 too_short_fasta = f"files/{library}/{library}_len_fail.fasta" # fasta file of reads
@@ -119,7 +140,7 @@ with open(db_file, "r") as file:
         line = line.strip()
         if line.startswith(">"):  # Indicates a header line in FASTA
             # Extract the prefix before the first underscore
-            prefix = line.split("_")[0][1:]
+            prefix = line.split("-")[0][1:]
             if prefix not in variables:
                 variables.append(prefix)
 
@@ -150,8 +171,10 @@ for record in SeqIO.parse(fasta_file, "fasta"):
         
         row_data = {"readID": seq_id}
         for variable in variables: # the code iterates through the variable regions like this so that they get written in the order that they were specified in the blast file
-            matching_hits = [hit for hit in hits if hit[1].startswith(variable + "_")] # gets the two hits for the variable region in question
-            matching_hits.sort(key=lambda x: int(''.join(filter(str.isdigit, x[1].split("_")[1]))))  # sorts them so that the 3 prime hit comes first
+            matching_hits = [hit for hit in hits if hit[1].startswith(variable + "-")] # gets the two hits for the variable region in question
+            
+            matching_hits.sort(key=sort_key)
+            #matching_hits.sort(key=lambda x: int(''.join(filter(str.isdigit, x[1].split("_")[1]))))  # sorts them so that the 3 prime hit comes first
             
             if (len(matching_hits) == 2):
                 if matching_hits[1][1].split("-")[-1] == "R": # check the end of the 5prime hit's label to see whether to translate the antisense strand
