@@ -69,8 +69,15 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
         filtered_df[position] = filtered_column
     
     
-    # Rename the columns
-    #filtered_df.columns = [f"{i}" for i in range(1, len(sequences))]
+    # 🔹 Read headers from header_file
+    header_df = pd.read_excel("blastdb/sampled_residues.xlsx", engine="openpyxl")
+    new_headers = list(header_df.columns)
+
+    # Make sure number of headers matches number of positions
+    if len(new_headers) >= filtered_df.shape[1]:
+        filtered_df.columns = new_headers[:filtered_df.shape[1]]
+    else:
+        raise ValueError("Not enough headers in sampled_residues.xlsx to match positions")
     
     filtered_df.to_excel(output_file, index=True)
     
@@ -80,7 +87,7 @@ library = sys.argv[1]
 
 input_file = f"files/{library}/{library}.csv"
 output_file = f"files/{library}/{library}_freq.xlsx"
-options = f"blastdb/options.xlsx"
+options = f"blastdb/sampled_residues.xlsx"
 
 calculate_amino_acid_frequencies (input_file, output_file, options)
 

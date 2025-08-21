@@ -28,16 +28,16 @@ for library in "${libraries[@]}"; do
         #python3 -u pythonfiles/sort_by_len.py "$library" 3000
 
         # blast the reads against the flanking regions
-        python3 -u pythonfiles/blast.py "$library"
+        #python3 -u pythonfiles/blast.py "$library"
 
         # extract the variable regions from each sequence
-        python3 -u pythonfiles/extract.py "$library"
+        #python3 -u pythonfiles/extract.py "$library"
 
         # rank the unique sequences
         #python3 -u pythonfiles/rank_var.py "$library"
 
         # calculate the amino acid frequencies at each position
-        #python3 -u pythonfiles/calc_freq.py "$library"
+        python3 -u pythonfiles/calc_freq.py "$library"
     } >"$log_file" 2>&1 &
 
 done

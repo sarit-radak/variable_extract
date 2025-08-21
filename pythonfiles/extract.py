@@ -9,7 +9,6 @@ from openpyxl import load_workbook, Workbook
 
 
 def get_variable (first_hit, second_hit, seq, orientation, antisense):
-        print (first_hit, second_hit)
         variable = ""
         status = ""
 
