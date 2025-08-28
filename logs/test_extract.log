@@ -1,1 +1,5 @@
 Processing library: test
+Extracted 5232 sequences to files/test/test_all.fasta
+blasting test against flanking regions
+extracting variable regions from test 
+variable region extraction complete

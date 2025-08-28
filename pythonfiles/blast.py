@@ -22,7 +22,7 @@ def blast (library, num_regions):
 library = sys.argv[1]
 
 
-df = pd.read_excel("blastdb/flanking_regions.xlsx")
+df = pd.read_excel("blastdb/config.xlsx")
 num_regions = len(df)
 
 

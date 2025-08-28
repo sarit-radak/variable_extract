@@ -106,7 +106,7 @@ def sort_key(x):
 
 
 library = sys.argv[1]
-df = pd.read_excel("blastdb/flanking_regions.xlsx")
+df = pd.read_excel("blastdb/config.xlsx")
 num_regions = len(df)
 
 fasta_file = f"files/{library}/{library}_len_pass.fasta" # fasta file of reads

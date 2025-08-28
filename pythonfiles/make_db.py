@@ -58,9 +58,6 @@ def name_make(row):
         return row['Protein'] + "_" + str(row["Start Position"]) + "_" + str (int (row["Start Position"]) + int (row["Length"]) - 1)
 
 
-
-
-
 def convert_to_fasta(input_file, output_file):
     # Read the data
     df = pd.read_excel(input_file)
