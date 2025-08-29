@@ -5,7 +5,7 @@ mkdir -p logs
 libraries=($(find files -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
 
 # make the blast database
-#python3 -u pythonfiles/make_db.py 
+python3 -u pythonfiles/make_db.py 
 
 
 for library in "${libraries[@]}"; do
@@ -20,7 +20,7 @@ for library in "${libraries[@]}"; do
         #awk '/^>/ {count++} count<=1000' files/$library/$library"_all.fasta" >  files/$library/$library"_1000.fasta"
         
         # exclude all reads that aren't long enough
-        #python3 -u pythonfiles/sort_by_len.py "$library" 3000
+        python3 -u pythonfiles/sort_by_len.py "$library" 3000
 
         # blast the reads against the flanking regions
         python3 -u pythonfiles/blast.py "$library"

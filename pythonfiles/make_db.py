@@ -2,7 +2,7 @@ import sys
 import subprocess
 import pandas as pd
 
-excel_file = "blastdb/config.xlsx"
+excel_file = "config.xlsx"
 fasta_file = "blastdb/flanking_regions.fasta"
 
 

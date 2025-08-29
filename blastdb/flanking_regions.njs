@@ -6,7 +6,7 @@
   "description": "blastdb/flanking_regions.fasta",
   "number-of-letters": 90,
   "number-of-sequences": 6,
-  "last-updated": "2025-08-28T14:23:00",
+  "last-updated": "2025-08-28T21:47:00",
   "number-of-volumes": 1,
   "bytes-total": 148287,
   "bytes-to-cache": 221,
