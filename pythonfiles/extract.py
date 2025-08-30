@@ -1,10 +1,12 @@
 import os
+import re
 import sys
-from numpy import var
 import pandas as pd
+from numpy import var
 from Bio import SeqIO
 from Bio.Seq import Seq
 from datetime import datetime
+from collections import defaultdict
 from openpyxl import load_workbook, Workbook
 
 
@@ -146,14 +148,12 @@ df_const = df[df["Variable/Constant"].str.lower() == "constant"]
 
 constants = {}
 for _, row in df_const.iterrows():
-    protein = row["Protein"].replace(" ", "_")  # e.g. MHC A3 → MHC_A3
-    value = str(row["WT Residue"]).strip()  # your constants (aaaa, bbbb, etc.)
+    protein = row["Protein"].replace(" ", "_")
+    value = str(row["WT Residue"]).strip()
 
     # make a label; since constants have no start/length, use region number
     region_id = f"{protein}_const{row['Region']}"
     constants[region_id] = value
-
-print(constants)
 
 
 
@@ -201,29 +201,57 @@ for record in SeqIO.parse(fasta_file, "fasta"):
             else:
                 missing_flanking_region += 1
         
-        if not([key for key in variables if key not in row_data or not row_data[key]]): # only append row if variable regions were extracted successfully
 
-            # Get ordered lists of constants and variables
-            constants_items = list(constants.values())
-            variables_items = [row_data[v] for v in variables if v in row_data]
+        if not([key for key in variables if key not in row_data or not row_data[key]]):  # only append row if variable regions were extracted successfully
 
-            # Check list length condition
-            if len(constants_items) != len(variables_items) + 1:
-                raise ValueError(f"Constants list must be one longer than variables list. Got {len(constants_items)} vs {len(variables_items)}")
+            # ---- Group constants by protein using the constants dict keys ----
+            const_groups_idx = defaultdict(list)  # protein -> list[(index, seq_lower)]
+            for ck, cv in constants.items():
+                prot = ck.split('_const')[0]  # e.g. 'MHC_A3', 'B2M'
+                m = re.search(r'(\d+)$', ck)
+                cidx = int(m.group(1)) if m else 0
+                const_groups_idx[prot].append((cidx, str(cv).lower()))
+            for prot in const_groups_idx:
+                const_groups_idx[prot].sort()
 
-            # Normalize case
-            constants_items = [c.lower() for c in constants_items]
-            variables_items = [v.upper() for v in variables_items]
+            # ---- Group variables by protein ----
+            var_groups_idx = defaultdict(list)
+            for vk, vv in row_data.items():
+                if vk in ("readID", "Complete Sequence") or not isinstance(vv, str):
+                    continue
+                if not re.search(r'\d', vk):
+                    continue
 
-            # Interleave
-            stitched = "".join(c + v for c, v in zip(constants_items, variables_items)) + constants_items[-1]
-            print (stitched)
-            # Add to row_data
-            row_data["Complete Sequence"] = stitched
+                prot = next((p for p in const_groups_idx if vk.startswith(p + "_")), None)
+                if prot is None:
+                    m = re.match(r'^(.+?)(?=_\d)', vk)
+                    prot = m.group(1) if m else None
+                if prot is None:
+                    continue
 
+                vidx = int(re.search(r'(\d+)', vk).group())
+                var_groups_idx[prot].append((vidx, str(vv).upper()))
+            for prot in var_groups_idx:
+                var_groups_idx[prot].sort()
+
+            # ---- Stitch per protein, put into its own column ----
+            protein_order = sorted(const_groups_idx.keys(), key=lambda p: const_groups_idx[p][0][0])
+
+            for prot in protein_order:
+                consts = [s for _, s in const_groups_idx[prot]]
+                vars_  = [s for _, s in var_groups_idx.get(prot, [])]
+
+                if len(consts) != len(vars_) + 1:
+                    raise ValueError(f"{prot}: expected len(constants)=len(variables)+1, got {len(consts)} vs {len(vars_)}")
+
+                block = "".join(c + v for c, v in zip(consts, vars_)) + consts[-1]
+
+                # Make a nice column name: turn "MHC_A3" → "MHC A3"
+                col_name = prot.replace("_", " ")
+                row_data[col_name] = block
 
             rows.append(row_data)
-            good+=1
+            good += 1
 
     else:
         missing_flanking_region +=1
