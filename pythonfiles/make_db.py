@@ -16,7 +16,7 @@ def make_sampled_residues_file(excel_file):
 
     # read the input file
     df = pd.read_excel(excel_file)
-
+    df = df[df["Variable/Constant"].str.lower() == "variable"]
     # dictionary for expanded data
     expanded = {}
 
@@ -53,14 +53,14 @@ def name_make(row):
     row['Protein'] = row['Protein'].replace(" ", "_")
 
     if row["Length"] == 1:
-        return row['Protein'] + "_" + str(row["Start Position"])
+        return row['Protein'] + "_" + str(int(row["Start Position"]))
     else:
-        return row['Protein'] + "_" + str(row["Start Position"]) + "_" + str (int (row["Start Position"]) + int (row["Length"]) - 1)
-
+        return row['Protein'] + "_" + str(int(row["Start Position"])) + "_" + str (int (row["Start Position"]) + int (row["Length"]) - 1)
 
 def convert_to_fasta(input_file, output_file):
     # Read the data
     df = pd.read_excel(input_file)
+    df = df[df["Variable/Constant"].str.lower() == "variable"]
 
     # Open the output file for writing
     with open(output_file, 'w') as fasta_file:
@@ -68,7 +68,7 @@ def convert_to_fasta(input_file, output_file):
         for index, row in df.iterrows():
             
             name = name_make(row)
-            length = row['Length']
+            length = int(row['Length'])
             strand = row["Strand"]
             five_prime = row['5\' Flanking Region']
             three_prime = row['3\' Flanking Region']

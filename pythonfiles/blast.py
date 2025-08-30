@@ -23,8 +23,9 @@ library = sys.argv[1]
 
 
 df = pd.read_excel("config.xlsx")
-num_regions = len(df)
 
+df = df[df["Variable/Constant"].str.lower() == "variable"]
+num_regions = len(df)
 
 print (f"blasting {library} against flanking regions")
 blast (library, num_regions)
