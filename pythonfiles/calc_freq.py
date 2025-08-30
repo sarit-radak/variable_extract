@@ -49,7 +49,7 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
     # Prepare a new DataFrame to hold the filtered frequencies
     filtered_df = pd.DataFrame(index=pivot_df.index)
 
-    
+    print (filtered_df)
     # Check acceptable amino acids against options
     for position in range(pivot_df.shape[1]):
         # Get the acceptable amino acids for this position

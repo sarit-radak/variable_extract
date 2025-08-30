@@ -1,4 +1,10 @@
 Processing library: test
-blasting test against flanking regions
-extracting variable regions from test 
-variable region extraction complete
+Empty DataFrame
+Columns: []
+Index: [*, A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y]
+Traceback (most recent call last):
+  File "/Users/sradak/Downloads/variable_extract/pythonfiles/calc_freq.py", line 92, in <module>
+    calculate_amino_acid_frequencies (input_file, output_file, options)
+  File "/Users/sradak/Downloads/variable_extract/pythonfiles/calc_freq.py", line 80, in calculate_amino_acid_frequencies
+    raise ValueError("Not enough headers in sampled_residues.xlsx to match positions")
+ValueError: Not enough headers in sampled_residues.xlsx to match positions

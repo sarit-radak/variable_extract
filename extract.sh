@@ -5,7 +5,7 @@ mkdir -p logs
 libraries=($(find files -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
 
 # make the blast database
-python3 -u pythonfiles/make_db.py
+#python3 -u pythonfiles/make_db.py
 
 
 for library in "${libraries[@]}"; do
@@ -19,14 +19,14 @@ for library in "${libraries[@]}"; do
         # extract first 1000 reads
         #awk '/^>/ {count++} count<=1000' files/$library/$library"_all.fasta" >  files/$library/$library"_1000.fasta"
         
-        # exclude all reads that aren't long enough
+        # exclude short reads
         #python3 -u pythonfiles/sort_by_len.py "$library" 3000
 
         # blast the reads against the flanking regions
-        python3 -u pythonfiles/blast.py "$library"
+        #python3 -u pythonfiles/blast.py "$library"
 
         # extract the variable regions from each sequence
-        python3 -u pythonfiles/extract.py "$library"
+        #python3 -u pythonfiles/extract.py "$library"
 
         # rank the unique sequences
         python3 -u pythonfiles/rank_var.py "$library"

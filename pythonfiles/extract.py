@@ -39,14 +39,14 @@ def get_variable (first_hit, second_hit, seq, orientation, antisense):
                 status = "variable_wrong_len"   
     
         if len(second_hit[1].split("-")) == 3: # name, 5 prime, length
-            correct_length_part = second_hit[1].split('-')[2]  # Extracts length
+            correct_length_part = second_hit[1].split('-')[2]  # extracts length
         
         else:
             correct_length_part = -1
 
         # Check if it's a list of acceptable lengths
         if ',' in correct_length_part:
-            acceptable_lengths = list(map(int, correct_length_part.split(',')))  # Convert to a list of integers
+            acceptable_lengths = list(map(int, correct_length_part.split(',')))  # convert to a list of integers
             if len(variable) not in acceptable_lengths:
                 variable = ""
                 status = "variable_wrong_len"
@@ -136,8 +136,7 @@ variables = []
 with open(db_file, "r") as file:
     for line in file:
         line = line.strip()
-        if line.startswith(">"):  # Indicates a header line in FASTA
-            # Extract the prefix before the first underscore
+        if line.startswith(">"):
             prefix = line.split("-")[0][1:]
             if prefix not in variables:
                 variables.append(prefix)
@@ -150,8 +149,6 @@ constants = {}
 for _, row in df_const.iterrows():
     protein = row["Protein"].replace(" ", "_")
     value = str(row["WT Residue"]).strip()
-
-    # make a label; since constants have no start/length, use region number
     region_id = f"{protein}_const{row['Region']}"
     constants[region_id] = value
 
@@ -164,7 +161,7 @@ variable_wrong_len = 0
 good = 0
 
 for record in SeqIO.parse(fasta_file, "fasta"):
-    seq_id = record.id  # Extract the sequence ID from the FASTA file
+    seq_id = record.id  # extract the sequence ID from the FASTA file
     seq = record.seq # extract the sequence
     
     hits = alignment_dict.get(seq_id, []) # get all of the blast hits for the read
@@ -186,7 +183,6 @@ for record in SeqIO.parse(fasta_file, "fasta"):
             matching_hits = [hit for hit in hits if hit[1].startswith(variable + "-")] # gets the two hits for the variable region in question
             
             matching_hits.sort(key=sort_key)
-            #matching_hits.sort(key=lambda x: int(''.join(filter(str.isdigit, x[1].split("_")[1]))))  # sorts them so that the 3 prime hit comes first
             
             if (len(matching_hits) == 2):
                 if matching_hits[1][1].split("-")[-1] == "R": # check the end of the 5prime hit's label to see whether to translate the antisense strand
@@ -203,8 +199,6 @@ for record in SeqIO.parse(fasta_file, "fasta"):
         
 
         if not([key for key in variables if key not in row_data or not row_data[key]]):  # only append row if variable regions were extracted successfully
-
-            # ---- Group constants by protein using the constants dict keys ----
             const_groups_idx = defaultdict(list)  # protein -> list[(index, seq_lower)]
             for ck, cv in constants.items():
                 prot = ck.split('_const')[0]  # e.g. 'MHC_A3', 'B2M'
@@ -214,7 +208,7 @@ for record in SeqIO.parse(fasta_file, "fasta"):
             for prot in const_groups_idx:
                 const_groups_idx[prot].sort()
 
-            # ---- Group variables by protein ----
+
             var_groups_idx = defaultdict(list)
             for vk, vv in row_data.items():
                 if vk in ("readID", "Complete Sequence") or not isinstance(vv, str):
@@ -234,7 +228,6 @@ for record in SeqIO.parse(fasta_file, "fasta"):
             for prot in var_groups_idx:
                 var_groups_idx[prot].sort()
 
-            # ---- Stitch per protein, put into its own column ----
             protein_order = sorted(const_groups_idx.keys(), key=lambda p: const_groups_idx[p][0][0])
 
             for prot in protein_order:
@@ -246,7 +239,6 @@ for record in SeqIO.parse(fasta_file, "fasta"):
 
                 block = "".join(c + v for c, v in zip(consts, vars_)) + consts[-1]
 
-                # Make a nice column name: turn "MHC_A3" → "MHC A3"
                 col_name = prot.replace("_", " ")
                 row_data[col_name] = block
 
@@ -263,7 +255,7 @@ df.to_csv (f"files/{library}/{library}.csv", index=False)
 
 
 
-# Write the summary values to the Excel file
+# write the summary values to the Excel file
 too_short = count_sequences_in_fasta (f"files/{library}/{library}_len_fail.fasta")
 
 total = good + variable_wrong_len + missing_flanking_region + too_short

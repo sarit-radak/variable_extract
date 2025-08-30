@@ -11,13 +11,10 @@ def make_sampled_residues_file(excel_file):
     # output file
     output_file = "blastdb/sampled_residues.xlsx"
 
-    # default amino acid set when nothing is specified
     ALL_AAS = "*ACDEFGHIKLMNPQRSTVWY"
 
-    # read the input file
     df = pd.read_excel(excel_file)
     df = df[df["Variable/Constant"].str.lower() == "variable"]
-    # dictionary for expanded data
     expanded = {}
 
     for _, row in df.iterrows():
@@ -30,7 +27,7 @@ def make_sampled_residues_file(excel_file):
 
         for i in range(length):
             pos = start_pos + i
-            wt = wt_residues[i] if i < len(wt_residues) else "X"   # fallback if missing
+            wt = wt_residues[i] if i < len(wt_residues) else "X"
             col_name = f"{protein} {wt}{pos}"
 
             if i < len(sampled_residues) and sampled_residues[i] != "":
@@ -38,14 +35,11 @@ def make_sampled_residues_file(excel_file):
             else:
                 expanded[col_name] = ALL_AAS
 
-    # make dataframe with one row
     out_df = pd.DataFrame([expanded])
 
-    # preserve original input order of regions
     ordered_cols = list(expanded.keys())
     out_df = out_df[ordered_cols]
 
-    # save to Excel
     out_df.to_excel(output_file, index=False)
     print(f"Saved to {output_file}")
 
@@ -62,9 +56,7 @@ def convert_to_fasta(input_file, output_file):
     df = pd.read_excel(input_file)
     df = df[df["Variable/Constant"].str.lower() == "variable"]
 
-    # Open the output file for writing
     with open(output_file, 'w') as fasta_file:
-        # Loop over each row in the dataframe
         for index, row in df.iterrows():
             
             name = name_make(row)
@@ -73,7 +65,6 @@ def convert_to_fasta(input_file, output_file):
             five_prime = row['5\' Flanking Region']
             three_prime = row['3\' Flanking Region']
             
-            # Write the 5' region
             if strand == "Top":
                 fasta_file.write(f">{name}-5prime-{length}\n")
             elif strand == "Bottom":
@@ -82,11 +73,8 @@ def convert_to_fasta(input_file, output_file):
                 print ("Strand is neither Top or Bottom")
             fasta_file.write(f"{five_prime}\n")
             
-            # Write the 3' region
             fasta_file.write(f">{name}-3prime\n")
             fasta_file.write(f"{three_prime}\n")            
-
-
 
 
 

@@ -12,7 +12,7 @@ def blast (library, num_regions):
     "-outfmt", "6",
     "-max_target_seqs", str(num_regions*2),
     "-max_hsps", "1",
-    "-task", "blastn-short" # this arguement is critical for the search to successfully identify the correct alignments. I think it adjusts the gap penalties and scoring matricies to values that are optimized for searches with small sequences.
+    "-task", "blastn-short" # this arguement is critical for the search to successfully identify the correct alignments. Tt adjusts the gap penalties and scoring matricies to values that are optimized for searches with small sequences.
     ]
     
     subprocess.run(blast_command, check=True, stderr=subprocess.DEVNULL)
@@ -21,12 +21,11 @@ def blast (library, num_regions):
 
 library = sys.argv[1]
 
-
 df = pd.read_excel("config.xlsx")
-
 df = df[df["Variable/Constant"].str.lower() == "variable"]
 num_regions = len(df)
 
 print (f"blasting {library} against flanking regions")
+
 blast (library, num_regions)
 
