@@ -140,6 +140,23 @@ with open(db_file, "r") as file:
             if prefix not in variables:
                 variables.append(prefix)
 
+
+# get the constant regions from the config file
+df_const = df[df["Variable/Constant"].str.lower() == "constant"]
+
+constants = {}
+for _, row in df_const.iterrows():
+    protein = row["Protein"].replace(" ", "_")  # e.g. MHC A3 → MHC_A3
+    value = str(row["WT Residue"]).strip()  # your constants (aaaa, bbbb, etc.)
+
+    # make a label; since constants have no start/length, use region number
+    region_id = f"{protein}_const{row['Region']}"
+    constants[region_id] = value
+
+print(constants)
+
+
+
 # extract the variable regions
 rows = [] # this becomes the output spreadsheet
 missing_flanking_region = 0
@@ -185,7 +202,26 @@ for record in SeqIO.parse(fasta_file, "fasta"):
                 missing_flanking_region += 1
         
         if not([key for key in variables if key not in row_data or not row_data[key]]): # only append row if variable regions were extracted successfully
-            print (row_data)
+
+            # Get ordered lists of constants and variables
+            constants_items = list(constants.values())
+            variables_items = [row_data[v] for v in variables if v in row_data]
+
+            # Check list length condition
+            if len(constants_items) != len(variables_items) + 1:
+                raise ValueError(f"Constants list must be one longer than variables list. Got {len(constants_items)} vs {len(variables_items)}")
+
+            # Normalize case
+            constants_items = [c.lower() for c in constants_items]
+            variables_items = [v.upper() for v in variables_items]
+
+            # Interleave
+            stitched = "".join(c + v for c, v in zip(constants_items, variables_items)) + constants_items[-1]
+            print (stitched)
+            # Add to row_data
+            row_data["Complete Sequence"] = stitched
+
+
             rows.append(row_data)
             good+=1
 
