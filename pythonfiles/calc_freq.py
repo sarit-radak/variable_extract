@@ -5,9 +5,14 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
     # Read the xlsx file
     df = pd.read_csv(input_file)
     
-    sequences = df.iloc[:, 1:].sum(axis=1).tolist()
+    # pick only the columns with just the variable regions
+    valid_cols = [col for col in df.columns[1:] if str(df.iloc[0][col])[0].isupper()]
+
+    # concatenate only those
+    sequences = df[valid_cols].agg(''.join, axis=1).tolist()
     
-    # Create a dictionary to hold the frequencies
+
+    # create a dictionary to hold the frequencies
     position_frequencies = {}
 
     all_aminos = ['*', 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
@@ -49,7 +54,6 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
     # Prepare a new DataFrame to hold the filtered frequencies
     filtered_df = pd.DataFrame(index=pivot_df.index)
 
-    print (filtered_df)
     # Check acceptable amino acids against options
     for position in range(pivot_df.shape[1]):
         # Get the acceptable amino acids for this position
