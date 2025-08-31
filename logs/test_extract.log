@@ -1,5 +1,20 @@
 Processing library: test
-Empty DataFrame
-Columns: []
-Index: [*, A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y]
-test frequencies at variable positions calculated
+
+Extracting sequences to fasta...
+Extracted 5232 sequences to files/test/test_all.fasta
+
+Removing short reads...
+3599 sequences >= 3000bp (68.8%)
+1633 sequences < 3000bp (31.2%)
+
+BLASTing against flanking regions...
+BLAST complete in 1.45 seconds
+
+Extracting variable regions from reads...
+Variable region extraction complete
+
+Ranking sequences by frequency...
+Ranking complete
+
+Calculating amino acid frequency at each position...
+Frequency calculation complete

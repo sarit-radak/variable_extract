@@ -23,6 +23,8 @@ def calculate_variable_frequency(input_file, output_file):
 
     freq_df.to_csv(output_file, index=False)
     
+print ("")
+print("Ranking sequences by frequency...")
 
 
 library = sys.argv[1]
@@ -31,3 +33,5 @@ input_file = f"files/{library}/{library}.csv"
 output_file = f"files/{library}/{library}_ranked.csv"
 
 calculate_variable_frequency(input_file, output_file)
+
+print("Ranking complete")

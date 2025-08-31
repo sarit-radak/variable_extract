@@ -85,7 +85,8 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
     
     filtered_df.to_excel(output_file, index=True)
     
-
+print ("")
+print("Calculating amino acid frequency at each position...")
 
 library = sys.argv[1]
 
@@ -95,4 +96,4 @@ options = f"blastdb/sampled_residues.xlsx"
 
 calculate_amino_acid_frequencies (input_file, output_file, options)
 
-print (library, "frequencies at variable positions calculated")
+print("Frequency calculation complete")

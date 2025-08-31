@@ -41,7 +41,6 @@ def make_sampled_residues_file(excel_file):
     out_df = out_df[ordered_cols]
 
     out_df.to_excel(output_file, index=False)
-    print(f"Saved to {output_file}")
 
 def name_make(row):
     row['Protein'] = row['Protein'].replace(" ", "_")
@@ -76,12 +75,19 @@ def convert_to_fasta(input_file, output_file):
             fasta_file.write(f">{name}-3prime\n")
             fasta_file.write(f"{three_prime}\n")            
 
+def count_fasta_sequences(fasta_file):
+    with open(fasta_file) as f:
+        return sum(1 for line in f if line.startswith(">"))
+
 
 
 make_sampled_residues_file(excel_file)
+print(f"Sampled residues written to blastdb/sampled_residues.xlsx")
 
+
+
+# convert flanking regions to fasta file for building database
 convert_to_fasta(excel_file, fasta_file)
-
 
 command = [
 "makeblastdb",
@@ -90,5 +96,11 @@ command = [
 "-out", "blastdb/flanking_regions"
 ]
 
-subprocess.run(command, check=True, stderr=subprocess.DEVNULL)
+subprocess.run(
+    command,
+    check=True,
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL
+)
 
+print (f"BLAST database written to blastdb/flanking_regions with {count_fasta_sequences(fasta_file)} sequences")

@@ -4,6 +4,8 @@ import gzip
 import shutil
 from Bio import SeqIO
 
+print ("")
+print("Extracting sequences to fasta...")
 
 sample = sys.argv[1]
 dir = f"files/{sample}"

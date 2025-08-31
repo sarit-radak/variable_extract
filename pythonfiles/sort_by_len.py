@@ -1,5 +1,14 @@
+from calendar import c
 import sys
 import shutil
+
+def count_fasta_sequences(fasta_file):
+    with open(fasta_file) as f:
+        return sum(1 for line in f if line.startswith(">"))
+
+
+print ("")
+print("Removing short reads...")
 
 library = sys.argv[1]
 min_len = int(sys.argv[2])
@@ -35,4 +44,11 @@ with open(input_fasta, 'r') as infile, open(good_file, 'w') as good_out, open(ba
     elif seq:
         bad_out.write(header + "\n" + seq + "\n")
 
-print(f"Sequences sorted into {good_file} (pass) and {bad_file} (fail)")
+pass_count = count_fasta_sequences (good_file)
+fail_count = count_fasta_sequences (bad_file)
+
+pass_rate = round( 100 * pass_count / (pass_count + fail_count), 1)
+fail_rate = round( 100 * fail_count / (pass_count + fail_count), 1)
+
+print (f"{pass_count} sequences >= {min_len}bp ({pass_rate}%)")
+print (f"{fail_count} sequences < {min_len}bp ({fail_rate}%)")
