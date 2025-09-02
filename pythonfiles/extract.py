@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import time
 import pandas as pd
 from numpy import var
 from Bio import SeqIO
@@ -104,9 +105,23 @@ def sort_key(x):
 
     return (digits, prime_val, name)
 
+def format_elapsed(seconds: float) -> str:
+    if seconds < 1:
+        return f"{seconds*1000:.0f} ms"
+    elif seconds < 60:
+        return f"{seconds:.2f} seconds"
+    elif seconds < 3600:
+        m, s = divmod(seconds, 60)
+        return f"{int(m)}m {s:.1f}s"
+    else:
+        h, rem = divmod(seconds, 3600)
+        m, s = divmod(rem, 60)
+        return f"{int(h)}h {int(m)}m {s:.0f}s"
+
 
 print ("")
 print("Extracting variable regions from reads...")
+start = time.time()
 
 library = sys.argv[1]
 df = pd.read_excel("config.xlsx")
@@ -248,8 +263,6 @@ for record in SeqIO.parse(fasta_file, "fasta"):
     else:
         missing_flanking_region +=1
 
-print ("Variable region extraction complete")
-
 df = pd.DataFrame(rows)
 df.to_csv (f"files/{library}/{library}.csv", index=False)
 
@@ -271,3 +284,8 @@ variable_wrong_len_percent_fmt = f"{variable_wrong_len_percent:,.2f}"
 too_short_percent_fmt = f"{too_short_percent:,.2f}"
 
 write_to_excel(summary_file, [library, good, variable_wrong_len, missing_flanking_region, too_short, good_percent_fmt, variable_wrong_len_percent_fmt, missing_flanking_region_percent_fmt, too_short_percent_fmt, timestamp])
+
+end = time.time()
+
+elapsed = end - start
+print (f"Variable region extraction complete in {format_elapsed(elapsed)}")
