@@ -6,7 +6,7 @@ libraries=($(find files -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
 
 
 # make the blast database
-#python3 -u pythonfiles/make_db.py > logs/make_db.log 2>&1
+python3 -u pythonfiles/make_db.py > logs/make_db.log 2>&1
 
 
 for library in "${libraries[@]}"; do
@@ -18,10 +18,10 @@ for library in "${libraries[@]}"; do
         python3 -u pythonfiles/extract_to_fasta.py "$library"
 
         # extract first 1000 reads
-        #awk '/^>/ {count++} count<=1000' files/$library/$library"_all.fasta" >  files/$library/$library"_1000.fasta"
+        awk '/^>/ {count++} count<=1000' files/$library/$library"_all.fasta" >  files/$library/$library"_1000.fasta"
         
         # exclude short reads
-        python3 -u pythonfiles/sort_by_len.py "$library" 3000
+        python3 -u pythonfiles/sort_by_len.py "$library" 3200
 
         # blast the reads against the flanking regions
         python3 -u pythonfiles/blast.py "$library"

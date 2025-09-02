@@ -6,6 +6,8 @@ import pandas as pd
 from numpy import var
 from Bio import SeqIO
 from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+
 from datetime import datetime
 from collections import defaultdict
 from openpyxl import load_workbook, Workbook
@@ -30,7 +32,7 @@ def get_variable (first_hit, second_hit, seq, orientation, antisense):
         if orientation == "reverse":
             start = int(second_hit [6])-1
             end = int(first_hit [7])
-            
+
             if (end<start) & ((end-start)%3==0): # checks that the region is divisible by 3
                 if not(antisense):
                     variable = str(seq[end:start].reverse_complement().translate())
@@ -39,11 +41,9 @@ def get_variable (first_hit, second_hit, seq, orientation, antisense):
             else:
                 status = "variable_wrong_len"   
     
-        if len(second_hit[1].split("-")) == 3: # name, 5 prime, length
-            correct_length_part = second_hit[1].split('-')[2]  # extracts length
+        correct_length_part = second_hit[1].split('-')[2]  # extracts length
         
-        else:
-            correct_length_part = -1
+        
 
         # Check if it's a list of acceptable lengths
         if ',' in correct_length_part:
@@ -171,6 +171,7 @@ for _, row in df_const.iterrows():
 
 # extract the variable regions
 rows = [] # this becomes the output spreadsheet
+failed_records = []
 missing_flanking_region = 0
 variable_wrong_len = 0
 good = 0
@@ -206,11 +207,18 @@ for record in SeqIO.parse(fasta_file, "fasta"):
                     antisense = False
 
                 row_data[variable], status =  get_variable (matching_hits[0], matching_hits[1], seq, orientation, antisense)
+
                 if status == "variable_wrong_len" and double_checker == False:
                     variable_wrong_len += 1
                     double_checker = True
+                    failed_records.append(SeqRecord(seq, id=f"{seq_id}|wrong_len", description=""))
             else:
                 missing_flanking_region += 1
+                failed_records.append(SeqRecord(seq, id=f"{seq_id}|missing_flank", description=""))
+        
+        else:
+            failed_records.append(SeqRecord(seq, id=f"{seq_id}|wrong_num_hits", description=""))
+
         
 
         if not([key for key in variables if key not in row_data or not row_data[key]]):  # only append row if variable regions were extracted successfully
@@ -266,6 +274,8 @@ for record in SeqIO.parse(fasta_file, "fasta"):
 df = pd.DataFrame(rows)
 df.to_csv (f"files/{library}/{library}.csv", index=False)
 
+if failed_records:
+    SeqIO.write(failed_records, f"files/{library}/{library}_extract_fail.fasta", "fasta")
 
 
 # write the summary values to the Excel file
