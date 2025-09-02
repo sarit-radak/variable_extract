@@ -4,25 +4,24 @@ import gzip
 import shutil
 from Bio import SeqIO
 
-# Get command line arguments
+print ("")
+print("Extracting sequences to fasta...")
 
 sample = sys.argv[1]
-dir = "files/"
+dir = f"files/{sample}"
 
-# Output FASTA file
-output_fasta = f"{dir}{sample}_all.fasta"
-input_dir = f"{dir}{sample}"
+output_fasta = f"{dir}/{sample}_all.fasta"
 
 
 # Collect all .fastq and .fastq.gz files from the directory
-all_files = os.listdir(input_dir)
+all_files = os.listdir(dir)
 fastq_gz_files = [f for f in all_files if f.endswith('.fastq.gz')]
 fastq_files = [f for f in all_files if f.endswith('.fastq')]
 
 # Unzip .fastq.gz files if they haven't been unzipped yet
 for gz_file in fastq_gz_files:
-    fastq_path = os.path.join(input_dir, gz_file)
-    unzipped_file = os.path.join(input_dir, gz_file[:-3])  # Remove '.gz'
+    fastq_path = os.path.join(dir, gz_file)
+    unzipped_file = os.path.join(dir, gz_file[:-3])  # Remove '.gz'
     
     if not os.path.exists(unzipped_file):  # Check if already unzipped
         print(f"Unzipping {gz_file}...")
@@ -36,7 +35,7 @@ sequences_written = 0
 # Open output file to write
 with open(output_fasta, 'w') as fasta_out:
     for fastq_file in fastq_files:
-        fastq_path = os.path.join(input_dir, fastq_file)
+        fastq_path = os.path.join(dir, fastq_file)
         with open(fastq_path, 'r') as handle:
             for record in SeqIO.parse(handle, 'fastq'):
                 # Write header

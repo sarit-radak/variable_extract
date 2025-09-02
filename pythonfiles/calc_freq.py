@@ -5,9 +5,14 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
     # Read the xlsx file
     df = pd.read_csv(input_file)
     
-    sequences = df.iloc[:, 1:].sum(axis=1).tolist()
+    # pick only the columns with just the variable regions
+    valid_cols = [col for col in df.columns[1:] if str(df.iloc[0][col])[0].isupper()]
+
+    # concatenate only those
+    sequences = df[valid_cols].agg(''.join, axis=1).tolist()
     
-    # Create a dictionary to hold the frequencies
+
+    # create a dictionary to hold the frequencies
     position_frequencies = {}
 
     all_aminos = ['*', 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
@@ -49,7 +54,6 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
     # Prepare a new DataFrame to hold the filtered frequencies
     filtered_df = pd.DataFrame(index=pivot_df.index)
 
-    
     # Check acceptable amino acids against options
     for position in range(pivot_df.shape[1]):
         # Get the acceptable amino acids for this position
@@ -69,19 +73,27 @@ def calculate_amino_acid_frequencies (input_file, output_file, options):
         filtered_df[position] = filtered_column
     
     
-    # Rename the columns
-    #filtered_df.columns = [f"{i}" for i in range(1, len(sequences))]
+    # 🔹 Read headers from header_file
+    header_df = pd.read_excel("blastdb/sampled_residues.xlsx", engine="openpyxl")
+    new_headers = list(header_df.columns)
+
+    # Make sure number of headers matches number of positions
+    if len(new_headers) >= filtered_df.shape[1]:
+        filtered_df.columns = new_headers[:filtered_df.shape[1]]
+    else:
+        raise ValueError("Not enough headers in sampled_residues.xlsx to match positions")
     
     filtered_df.to_excel(output_file, index=True)
     
-
+print ("")
+print("Calculating amino acid frequency at each position...")
 
 library = sys.argv[1]
 
-input_file = f"files/{library}.csv"
-output_file = f"files/{library}_freq.xlsx"
-options = f"blastdb/options.xlsx"
+input_file = f"files/{library}/{library}.csv"
+output_file = f"files/{library}/{library}_freq.xlsx"
+options = f"blastdb/sampled_residues.xlsx"
 
 calculate_amino_acid_frequencies (input_file, output_file, options)
 
-print (library, "frequencies at variable positions calculated")
+print("Frequency calculation complete")

@@ -1,22 +1,28 @@
+from calendar import c
 import sys
 import shutil
 
-# Get command line arguments
+def count_fasta_sequences(fasta_file):
+    with open(fasta_file) as f:
+        return sum(1 for line in f if line.startswith(">"))
+
+
+print ("")
+print("Removing short reads...")
+
 library = sys.argv[1]
 min_len = int(sys.argv[2])
 
-input_fasta = f"files/{library}_all.fasta"
-good_file = f"files/{library}_len_pass.fasta"
-bad_file = f"files/{library}_len_fail.fasta"
+input_fasta = f"files/{library}/{library}_all.fasta"
+good_file = f"files/{library}/{library}_len_pass.fasta"
+bad_file = f"files/{library}/{library}_len_fail.fasta"
 
-# If threshold is 0, rename the input file to the good file and create an empty bad file
 if min_len == 0:
     shutil.move(input_fasta, good_file)
     open(bad_file, 'w').close()
     print(f"Renamed {input_fasta} to {good_file} and created empty {bad_file}")
     sys.exit(0)
 
-# Sort reads based on length
 with open(input_fasta, 'r') as infile, open(good_file, 'w') as good_out, open(bad_file, 'w') as bad_out:
     seq = ""
     header = ""
@@ -33,10 +39,16 @@ with open(input_fasta, 'r') as infile, open(good_file, 'w') as good_out, open(ba
         else:
             seq += line
     
-    # Handle last sequence
     if seq and len(seq) >= min_len:
         good_out.write(header + "\n" + seq + "\n")
     elif seq:
         bad_out.write(header + "\n" + seq + "\n")
 
-print(f"Sequences sorted into {good_file} (pass) and {bad_file} (fail)")
+pass_count = count_fasta_sequences (good_file)
+fail_count = count_fasta_sequences (bad_file)
+
+pass_rate = round( 100 * pass_count / (pass_count + fail_count), 1)
+fail_rate = round( 100 * fail_count / (pass_count + fail_count), 1)
+
+print (f"{pass_count} sequences >= {min_len}bp ({pass_rate}%)")
+print (f"{fail_count} sequences < {min_len}bp ({fail_rate}%)")
