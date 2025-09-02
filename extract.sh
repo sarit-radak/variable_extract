@@ -1,5 +1,6 @@
 #!/bin/bash
 mkdir -p logs
+mkdir -p blastdb
 libraries=($(find files -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
 
 
